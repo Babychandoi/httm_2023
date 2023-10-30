@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+    <script src="/twbPage/jquery.twbsPagination.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+    <style>
+        
+      </style>
+</head>
+<body>
+  <header>
+        <h1 class="header">HomeBT1</h1>
+  </header>
+    <div id="root">
+      <br><br>
+        <div class="tbl_Simple">
+            <table class="List_Simple" >
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Image</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="data">
+          
+                </tbody>
+              </table>
+              
+        </div>
+        <div class="container">
+          <nav aria-label="Page navigation">
+              <ul class="pagination" id="pagination"></ul>
+          </nav>
+      </div>
+        <div class="createSimple">
+          <p onclick="CreateSimple()" class="created">CreateSimple++</p>
+        </div>
+    </div>
+    <div class="modal1" id="editModal">
+        <div class="modal-content1">
+          <br>
+          <h3 style="font-size: 130%;;
+                     color: white;">Chỉnh sửa thông tin mẫu</h3>
+          <div style="display: flex;">
+            <p style="color: white;
+                      font-size: 130%;
+                      margin-left: 3%;margin-top: 3%;"
+            >Label :</p>
+            <input class="modal-input1" id="editName" placeholder="Tên label">
+          </div>
+          <div style="display: flex;">
+            <p style="color: white;
+                      font-size: 130%;
+                      margin-left: 3%;margin-top: 3%;"
+            >Image :</p>
+            <input type="file" id="editImage" accept="image/*">
+          </div>
+          <br>
+          <div class="btn_click">
+            <button class="update" style="text-align: center;"
+                                              >Update</button>
+            <button class="cancelUpdate" style="
+                                                text-align: center;">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="modal1" id="createModal">
+      <div class="modal-content2">
+        <br>
+        <h3 style="font-size: 23px;
+                   color: white;">Thêm mới nhãn</h3>
+        <div style="display: flex;">
+          <p style="color: white;
+                    font-size: 130%;
+                    margin-left: 3%;margin-top: 3%;"
+          >Label :</p>
+          <input class="modal-input1" id="createName" placeholder="Tên label">
+        </div>
+        <div style="display: flex;">
+          <p style="color: white;
+                    font-size: 130%;
+                    margin-left: 3%;margin-top: 3%;"
+          >Image :</p>
+          <input type="file" id="createImage" accept="image/*">
+        </div>
+        <br>
+        <div class="btn_click">
+          <button class="create" style="text-align: center;"
+                                            >Create</button>
+          <button class="cancelCreate" style="text-align: center;">Cancel</button>
+        </div>
+        
+      </div>
+      
+    </div>
+    <div class="confirmation-box" id="confirmationBox">
+        <p style="font-size: 130%;text-align: center;">Bạn có chắc muốn xoá?</p>
+        <div style="display: flex;">
+          <div style="width: 50%;
+                      text-align: center;">
+            <button class="confirmDelete" style="font-size: 100%;">Xác nhận</button>
+          </div>
+          
+          <div style="width: 50%;
+                      text-align: center;">
+            <button class="cancelDelete" style="font-size: 100%;">Hủy</button>
+          </div>
+          
+        </div>
+    </div>
+    <div class="modal_chitet" id="chitietModal" >
+        <div class="img_ct">
+            <img src="" style=" margin: 16% auto;
+                                            height: 50%;
+                                            width: 50%;" id="myImage" >
+        </div>
+        <div class="tbl_chitiet" id="chitiet_tbl">
+            <table class="tbl_ct">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th >x_min</th>
+                        <th>y_min</th>
+                        <th>x_max</th>
+                        <th>y_max</th>
+                    </tr>
+
+                </thead>
+                <tbody id="data_ct">
+          
+                </tbody>
+            </table>
+            <button class="cancel_ct" style="text-align: center;margin-top: 20%;">Cancel</button>
+          </div>
+          
+        </div>
+        
+      </div>
+    <script type="text/javascript">
+      var totalPages = 1;
+  
+      ob = {
+          "page": "1",
+          "limit": "10"
+      }
+  
+      $.ajax({
+          type: "GET",
+          url: "http://localhost:8081/bt1",
+          data: ob,
+          dataType: "json",
+          success: function (data) {
+              totalPages = data.totalPage;
+              initializePagination();
+          }
+      });
+      function initializePagination() {
+          $(function () {
+              window.pagObj = $('#pagination').twbsPagination({
+                  totalPages: totalPages,
+                  visiblePages: 10,
+                  onPageClick: function (event, page) {
+                      nextpage(page)
+                  }
+              });
+          });
+      }
+      function nextpage(page){
+        $("#data").empty();
+        ob = {
+          "page": page,
+          "limit": "10"
+      }
+        $.ajax({
+          type: "GET",
+          url: "http://localhost:8081/bt1",
+          data: ob,
+          dataType: "json",
+          success: function (data) {
+              totalPages = data.totalPage;
+  
+              $.each(data.listSimple, function (i, item) {
+                  var row = "<tr>";
+                  row += "<td >" + new Date(item.date).toDateString() + "</td>";
+                  
+                  row += "<td ><img style='width: 110px;height: 110px;' src='" + item.image + "'></td>";
+                  row += "<td style='display:flex;padding-left: 35%;'><p onclick='Update(" + item.id + ")' class='action-buttons'>Sửa</p><p>/</p>"
+                      + "<p onclick='Delete(" + item.id + ")' class='action-buttons'>Xóa</p></td>";
+                      row += "<td><p onclick='xemchitiet("+item.id+","+JSON.stringify(item.image)+")' class='action-buttons'>chitiet</td>";
+                  row += "</tr>";
+                  $('.List_Simple').append(row);
+              });
+              initializePagination();
+          }
+      });
+      }
+    </script>
+  
+</body>
+<script src="/Simple1.js"></script>
+</html>
